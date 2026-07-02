@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Journey — Personal Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0a0f0b;
+    --bg-soft: #0e1510;
+    --surface: #131b14;
+    --surface-2: #182019;
+    --border: #23301f;
+    --text: #eef1e8;
+    --text-dim: #9aa895;
+    --text-faint: #5c6b57;
+    --accent: #7fbf6b;
+    --accent-glow: rgba(127,191,107,0.35);
+    --hsc-color: #6fa8dc;
+    --hsc-color-2: #8fc4e8;
+    --hsc-glow: rgba(111,168,220,0.45);
+    --month-color: #6ee7b7;
+    --month-color-2: #a7f3d0;
+    --month-glow: rgba(110,231,183,0.4);
+    --ibadah-color: #d4af37;
+    --ibadah-color-2: #e8cc6b;
+    --ibadah-glow: rgba(212,175,55,0.4);
+    --serif: 'Fraunces', serif;
+    --sans: 'Space Grotesk', sans-serif;
+    --mono: 'Space Mono', monospace;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(ellipse 900px 500px at 50% -10%, rgba(127,191,107,0.10), transparent 60%),
+      var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{ background:var(--accent-glow); }
+
+  .wrap{
+    max-width:920px;
+    margin:0 auto;
+    padding:48px 20px 100px;
+  }
+
+  /* ---------- Top bar ---------- */
+  .topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:44px;
+    gap:12px;
+    flex-wrap:wrap;
+  }
+  .brand{
+    font-family:var(--serif);
+    font-weight:500;
+    font-size:17px;
+    letter-spacing:0.02em;
+    color:var(--text-dim);
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .brand b{ color:var(--text); font-weight:600; }
+  .topbar-right{ display:flex; align-items:center; gap:10px; }
+  .name-pill{
+    background:var(--surface); border:1px solid var(--border);
+    padding:8px 16px; border-radius:999px;
+    font-family:var(--sans); font-size:13px; color:var(--text-dim);
+    display:flex; align-items:center; gap:7px;
+    cursor:pointer;
+  }
+  .name-pill span.who{ color:var(--text); font-weight:600; }
+  .icon-btn{
+    background:var(--surface);
+    border:1px solid var(--border);
+    color:var(--text-dim);
+    width:38px;height:38px;
+    border-radius:10px;
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+    font-size:16px;
+    transition:all .2s ease;
+    flex-shrink:0;
+  }
+  .icon-btn:hover{ color:var(--text); border-color:var(--accent); }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    text-align:center;
+    padding:20px 0 44px;
+    position:relative;
+  }
+  .ring-wrap{
+    position:relative;
+    width:260px;height:260px;
+    margin:0 auto 26px;
+  }
+  .ring-wrap svg{ width:100%; height:100%; transform:rotate(-90deg); }
+  .ring-bg{ fill:none; stroke:var(--surface-2); stroke-width:8; }
+  .ring-fg{
+    fill:none; stroke-width:8; stroke-linecap:round;
+    transition: stroke-dashoffset 1s cubic-bezier(.4,0,.2,1), stroke .6s ease;
+    filter: drop-shadow(0 0 10px var(--accent-glow));
+  }
+  .ring-center{
+    position:absolute; inset:0;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:2px;
+  }
+  .day-icon{ font-size:34px; line-height:1; margin-bottom:6px; filter:drop-shadow(0 0 14px var(--accent-glow)); }
+  .day-number{
+    font-family:var(--mono); font-size:44px; font-weight:700;
+    color:var(--text); letter-spacing:-0.02em; line-height:1;
+  }
+  .day-label{ font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--text-faint); margin-top:4px; }
+
+  .level-name{
+    font-family:var(--serif);
+    font-size:38px;
+    font-weight:600;
+    margin:10px 0 6px;
+    letter-spacing:-0.01em;
+  }
+  .level-index{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--accent);
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    margin-bottom:2px;
+  }
+  .level-motto{
+    font-family:var(--serif);
+    font-style:italic;
+    font-size:16px;
+    color:var(--text-dim);
+    max-width:420px;
+    margin:0 auto 18px;
+  }
+  .next-hint{
+    font-size:13px;
+    color:var(--text-faint);
+    font-family:var(--sans);
+  }
+  .next-hint b{ color:var(--text-dim); font-weight:600; }
+
+  .relapse-btn{
+    margin-top:26px;
+    background:transparent;
+    border:1px solid var(--border);
+    color:var(--text-faint);
+    font-family:var(--sans);
+    font-size:13px;
+    padding:10px 18px;
+    border-radius:999px;
+    cursor:pointer;
+    transition:all .2s ease;
+  }
+  .relapse-btn:hover{ border-color:#a4573a; color:#e08f6f; }
+
+  /* ---------- Section headers ---------- */
+  .section-title{
+    font-family:var(--serif);
+    font-size:13px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--text-faint);
+    margin:56px 0 20px;
+    display:flex;
+    align-items:center;
+    gap:14px;
+  }
+  .section-title::after{
+    content:'';
+    flex:1;
+    height:1px;
+    background:var(--border);
+  }
+
+  /* ---------- Reason box ---------- */
+  .reason-box{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:22px 24px;
+    position:relative;
+  }
+  .reason-box textarea{
+    width:100%;
+    min-height:110px;
+    background:transparent;
+    border:none;
+    outline:none;
+    resize:vertical;
+    color:var(--text);
+    font-family:var(--serif);
+    font-size:17px;
+    line-height:1.6;
+    font-style:italic;
+  }
+  .reason-box textarea::placeholder{ color:var(--text-faint); font-style:italic; }
+  .reason-foot{
+    display:flex; justify-content:space-between; align-items:center;
+    margin-top:10px;
+    font-size:11px;
+    color:var(--text-faint);
+    font-family:var(--mono);
+  }
+  .save-dot{
+    display:inline-flex; align-items:center; gap:6px;
+    opacity:0; transition:opacity .3s ease;
+  }
+  .save-dot.show{ opacity:1; }
+  .save-dot span.d{
+    width:6px;height:6px;border-radius:50%;background:var(--accent);
+  }
+  .save-dot.error{ opacity:1; color:#e08f6f; }
+  .save-dot.error span.d{ background:#e08f6f; }
+
+  /* ---------- Path (timeline) ---------- */
+  .path{
+    position:relative;
+    padding-left:34px;
+  }
+  .path::before{
+    content:'';
+    position:absolute;
+    left:11px; top:6px; bottom:6px;
+    width:2px;
+    background:linear-gradient(var(--border), var(--border));
+  }
+  .path-item{
+    position:relative;
+    padding:14px 0;
+    display:flex;
+    gap:16px;
+    align-items:flex-start;
+  }
+  .path-dot{
+    position:absolute; left:-34px; top:16px;
+    width:24px; height:24px;
+    border-radius:50%;
+    background:var(--bg-soft);
+    border:2px solid var(--border);
+    display:flex; align-items:center; justify-content:center;
+    font-size:12px;
+    z-index:1;
+    transition:all .3s ease;
+  }
+  .path-item.done .path-dot{ border-color:var(--text-faint); background:var(--surface); }
+  .path-item.current .path-dot{
+    border-color:var(--accent);
+    background:var(--accent);
+    box-shadow:0 0 0 4px var(--accent-glow);
+  }
+  .path-body{ flex:1; }
+  .path-top{ display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; }
+  .path-icon{ font-size:18px; }
+  .path-name{
+    font-family:var(--serif); font-weight:600; font-size:17px;
+    color:var(--text-faint);
+  }
+  .path-item.done .path-name{ color:var(--text-dim); }
+  .path-item.current .path-name{ color:var(--text); }
+  .path-range{
+    font-family:var(--mono); font-size:11px; color:var(--text-faint);
+    margin-left:auto;
+  }
+  .path-desc{
+    margin-top:4px; font-size:13px; color:var(--text-faint); line-height:1.6;
+  }
+  .path-item.current .path-desc{ color:var(--text-dim); }
+  .path-item.current .path-body{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:12px 16px;
+    margin-top:-8px;
+  }
+
+  /* ---------- HSC countdown ---------- */
+  .hsc-box{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:26px 24px 22px;
+  }
+  .hsc-top{
+    display:flex; align-items:baseline; gap:10px; margin-bottom:16px;
+  }
+  .hsc-percent{
+    font-family:var(--mono); font-size:32px; font-weight:700;
+    color:var(--hsc-color);
+  }
+  .hsc-sub{ font-size:12px; color:var(--text-faint); }
+  .hsc-track{
+    position:relative;
+    height:14px;
+    border-radius:999px;
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    overflow:visible;
+    margin-bottom:14px;
+  }
+  .hsc-fill{
+    position:absolute; inset:0; width:0%;
+    border-radius:999px;
+    background: linear-gradient(90deg, var(--hsc-color), var(--hsc-color-2));
+    background-size: 200% 100%;
+    animation: hscShimmer 2.6s linear infinite;
+    transition: width 1.2s cubic-bezier(.4,0,.2,1);
+    box-shadow: 0 0 12px var(--hsc-glow);
+  }
+  @keyframes hscShimmer{
+    0%{ background-position: 0% 0; }
+    100%{ background-position: 200% 0; }
+  }
+  .hsc-marker{
+    position:absolute; top:50%; left:0%;
+    transform:translate(-50%,-50%);
+    font-size:18px;
+    transition: left 1.2s cubic-bezier(.4,0,.2,1);
+    filter: drop-shadow(0 0 6px rgba(0,0,0,0.6));
+  }
+  .hsc-stats{
+    display:flex; justify-content:space-between;
+    font-size:13px; color:var(--text-dim);
+    font-family:var(--sans);
+    margin-bottom:10px;
+  }
+  .hsc-stats b{ color:var(--text); font-family:var(--mono); font-weight:700; }
+  .hsc-dates{
+    font-size:11px; color:var(--text-faint); font-family:var(--mono);
+    padding-top:10px; border-top:1px dashed var(--border);
+  }
+
+  .month-box{
+    margin-top:20px;
+    padding-top:18px;
+    border-top:1px solid var(--border);
+  }
+  .month-head{
+    display:flex; align-items:baseline; justify-content:space-between; margin-bottom:12px;
+  }
+  .month-title{
+    font-family:var(--serif); font-style:italic; font-size:15px; color:var(--text-dim);
+  }
+  .month-percent{
+    font-family:var(--mono); font-size:20px; font-weight:700; color:var(--month-color);
+  }
+  .month-track{
+    position:relative; height:10px; border-radius:999px;
+    background:var(--surface-2); border:1px solid var(--border);
+    margin-bottom:10px;
+  }
+  .month-fill{
+    position:absolute; inset:0; width:0%;
+    border-radius:999px;
+    background:linear-gradient(90deg, var(--month-color), var(--month-color-2));
+    background-size:200% 100%;
+    animation: hscShimmer 2.6s linear infinite;
+    transition: width 1.2s cubic-bezier(.4,0,.2,1);
+    box-shadow: 0 0 10px var(--month-glow);
+  }
+  .month-marker{
+    position:absolute; top:50%; left:0%;
+    transform:translate(-50%,-50%);
+    font-size:14px;
+    transition:left 1.2s cubic-bezier(.4,0,.2,1);
+    filter: drop-shadow(0 0 5px rgba(0,0,0,0.6));
+  }
+  .month-stats{
+    display:flex; justify-content:space-between;
+    font-size:12px; color:var(--text-faint); font-family:var(--sans);
+  }
+  .month-stats b{ color:var(--text-dim); font-family:var(--mono); font-weight:700; }
+
+  /* ---------- Ibadah section ---------- */
+  .ibadah-card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:24px;
+    margin-bottom:18px;
+  }
+  .ibadah-head{
+    display:flex; justify-content:space-between; align-items:center;
+    margin-bottom:16px; flex-wrap:wrap; gap:8px;
+  }
+  .ibadah-date{
+    font-family:var(--serif); font-size:17px; font-weight:600;
+  }
+  .ibadah-date .back-today{
+    font-family:var(--sans); font-size:11px; color:var(--ibadah-color);
+    margin-left:10px; cursor:pointer; text-decoration:underline;
+  }
+  .ibadah-today-badge{
+    font-family:var(--mono); font-size:11px; color:var(--text-faint);
+  }
+  .check-grid{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(110px,1fr));
+    gap:8px; margin-bottom:12px;
+  }
+  .check-item{
+    display:flex; align-items:center; gap:9px;
+    background:var(--surface-2); border:1px solid var(--border); border-radius:12px;
+    padding:10px 12px; cursor:pointer; transition:all .2s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .check-item:hover{ border-color:var(--text-faint); }
+  .check-item.checked{ border-color:var(--ibadah-color); background:rgba(212,175,55,0.08); }
+  .check-item input{ display:none; }
+  .check-item .box{
+    width:20px;height:20px;border-radius:6px;border:2px solid var(--border);
+    display:flex;align-items:center;justify-content:center; font-size:12px; flex-shrink:0;
+    transition:all .2s ease; color:transparent;
+  }
+  .check-item.checked .box{ background:var(--ibadah-color); border-color:var(--ibadah-color); color:#181205; }
+  .check-item .name{ font-size:13px; color:var(--text-dim); }
+  .check-item.checked .name{ color:var(--text); }
+  .check-item .pts{ margin-left:auto; font-family:var(--mono); font-size:10px; color:var(--text-faint); }
+
+  .quran-row{
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    background:var(--surface-2); border:1px solid var(--border); border-radius:12px;
+    padding:10px 12px; margin-bottom:8px;
+  }
+  .quran-row .label{ font-size:13px; color:var(--text-dim); display:flex; align-items:center; gap:8px; }
+  .quran-row .stepper{ display:flex; align-items:center; gap:8px; }
+  .quran-row button{
+    width:26px;height:26px; border-radius:8px; border:1px solid var(--border);
+    background:var(--bg-soft); color:var(--text); cursor:pointer; font-size:14px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .quran-row input[type=number]{
+    width:46px; text-align:center; background:transparent; border:none; outline:none;
+    color:var(--text); font-family:var(--mono); font-size:15px;
+  }
+  .quran-row .pts{ font-family:var(--mono); font-size:10px; color:var(--text-faint); }
+
+  .ibadah-points{
+    display:flex; justify-content:space-between; align-items:baseline;
+    margin-top:16px; padding-top:14px; border-top:1px dashed var(--border);
+  }
+  .ibadah-points .total{
+    font-family:var(--mono); font-size:26px; font-weight:700; color:var(--ibadah-color);
+  }
+  .ibadah-points .of{ font-size:12px; color:var(--text-faint); }
+  .ibadah-points .pct-badge{
+    font-family:var(--mono); font-size:13px; color:var(--text-dim);
+    background:var(--surface-2); border:1px solid var(--border);
+    padding:5px 12px; border-radius:999px;
+  }
+
+  .ibadah-grid{
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(48px,1fr));
+    gap:7px;
+  }
+  .day-cell{
+    aspect-ratio:1; border-radius:9px; background:var(--surface-2);
+    border:1px solid var(--border); display:flex; flex-direction:column;
+    align-items:center; justify-content:center; cursor:pointer; transition:all .2s ease;
+  }
+  .day-cell:hover{ border-color:var(--text-faint); }
+  .day-cell.future{ opacity:.28; cursor:default; }
+  .day-cell.future:hover{ border-color:var(--border); }
+  .day-cell.today{ border-color:var(--ibadah-color); box-shadow:0 0 0 2px rgba(212,175,55,0.22); }
+  .day-cell .num{ font-family:var(--mono); font-size:11px; color:var(--text-dim); }
+  .day-cell .pct{ font-family:var(--mono); font-size:9px; color:var(--text-faint); margin-top:2px; }
+
+  .level-card-head{
+    display:flex; align-items:center; gap:14px; margin-bottom:10px;
+  }
+  .level-card-icon{ font-size:34px; }
+  .level-card-name{ font-family:var(--serif); font-size:24px; font-weight:600; }
+  .level-card-arabic{ font-family:var(--serif); font-size:15px; color:var(--ibadah-color); }
+  .level-card-meaning{ font-size:13px; color:var(--text-dim); line-height:1.6; margin-bottom:14px; }
+  .lvl-track{
+    position:relative; height:12px; border-radius:999px;
+    background:var(--surface-2); border:1px solid var(--border); margin-bottom:10px;
+  }
+  .lvl-fill{
+    position:absolute; inset:0; width:0%; border-radius:999px;
+    background:linear-gradient(90deg, var(--ibadah-color), var(--ibadah-color-2));
+    background-size:200% 100%; animation:hscShimmer 2.6s linear infinite;
+    transition:width 1s cubic-bezier(.4,0,.2,1);
+    box-shadow:0 0 10px var(--ibadah-glow);
+  }
+  .rewards-row{
+    display:flex; flex-wrap:wrap; gap:8px; margin-top:12px;
+  }
+  .reward-chip{
+    font-size:12px; color:var(--text-dim); background:var(--surface-2);
+    border:1px solid var(--border); padding:6px 12px; border-radius:999px;
+    font-family:var(--sans);
+  }
+  .lvl-note{
+    font-size:11px; color:var(--text-faint); font-family:var(--mono); margin-top:12px;
+  }
+
+  /* ---------- Settings / modal panel ---------- */
+  .panel-overlay{
+    position:fixed; inset:0; background:rgba(6,9,7,0.7);
+    display:none; align-items:center; justify-content:center;
+    z-index:50; padding:20px;
+    backdrop-filter: blur(3px);
+  }
+  .panel-overlay.show{ display:flex; }
+  .panel{
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:18px; padding:28px; max-width:380px; width:100%;
+    max-height:88vh; overflow-y:auto;
+  }
+  .panel h3{
+    font-family:var(--serif); font-size:20px; margin:0 0 6px; font-weight:600;
+  }
+  .panel p{ font-size:13px; color:var(--text-dim); margin:0 0 18px; line-height:1.6; }
+  .panel label{ font-size:12px; color:var(--text-faint); display:block; margin-bottom:6px; }
+  .panel input[type=date], .panel input[type=text]{
+    width:100%; background:var(--bg-soft); border:1px solid var(--border);
+    color:var(--text); padding:10px 12px; border-radius:10px; font-family:var(--mono);
+    font-size:14px; margin-bottom:18px;
+  }
+  .panel-actions{ display:flex; gap:10px; }
+  .btn{
+    flex:1; padding:11px 14px; border-radius:10px; border:1px solid var(--border);
+    background:transparent; color:var(--text-dim); font-family:var(--sans);
+    font-size:13px; cursor:pointer; transition:all .2s ease;
+  }
+  .btn.primary{ background:var(--accent); color:#0a1408; border-color:var(--accent); font-weight:600; }
+  .btn:hover{ filter:brightness(1.1); }
+  .btn.danger:hover{ border-color:#a4573a; color:#e08f6f; }
+
+  footer{
+    text-align:center; margin-top:60px; font-size:11px; color:var(--text-faint);
+    font-family:var(--mono);
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .ring-fg{ transition:none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="topbar">
+    <div class="brand">🌱 <b>The Journey</b> · personal tracker</div>
+    <div class="topbar-right">
+      <div class="name-pill" id="namePill" title="নাম বদলাতে ক্লিক করো">👤 <span class="who" id="namePillText">তুমি</span></div>
+      <div class="icon-btn" id="settingsBtn" title="Settings">⚙</div>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="ring-wrap">
+      <svg viewBox="0 0 100 100">
+        <circle class="ring-bg" cx="50" cy="50" r="44"></circle>
+        <circle class="ring-fg" id="ring" cx="50" cy="50" r="44"></circle>
+      </svg>
+      <div class="ring-center">
+        <div class="day-icon" id="dayIcon">🌱</div>
+        <div class="day-number" id="dayNumber">0</div>
+        <div class="day-label">days</div>
+      </div>
+    </div>
+
+    <div class="level-index" id="levelIndex">Level 0</div>
+    <div class="level-name" id="levelName">Seedling</div>
+    <div class="level-motto" id="levelMotto">The journey begins</div>
+    <div class="next-hint" id="nextHint"></div>
+
+    <div><button class="relapse-btn" id="relapseBtn">relapse হয়েছে? এখান থেকে আবার শুরু করো</button></div>
+  </div>
+
+  <div class="section-title">তোমার কারণ</div>
+  <div class="reason-box">
+    <textarea id="reasonText" placeholder="কেন তুমি এই journey শুরু করেছো, লিখে রাখো এখানে... urge আসলে এটাই তোমাকে থামিয়ে দেবে।"></textarea>
+    <div class="reason-foot">
+      <span>যখনই ইচ্ছা এডিট করতে পারবে — automatically save হয়ে যাবে</span>
+      <span class="save-dot" id="saveDot"><span class="d"></span> <span id="saveDotText">saved</span></span>
+    </div>
+  </div>
+
+  <div class="section-title">Growth Path</div>
+  <div class="path" id="path"></div>
+
+  <div class="section-title">HSC Countdown</div>
+  <div class="hsc-box">
+    <div class="hsc-top">
+      <div class="hsc-percent" id="hscPercent">0%</div>
+      <div class="hsc-sub">HSC life-এর সময় পার হয়ে গেছে</div>
+    </div>
+    <div class="hsc-track">
+      <div class="hsc-fill" id="hscFill"></div>
+      <div class="hsc-marker" id="hscMarker">📖</div>
+    </div>
+    <div class="hsc-stats">
+      <span><b id="hscDaysPassed">0</b> দিন পার হয়েছে</span>
+      <span><b id="hscDaysLeft">0</b> দিন বাকি</span>
+    </div>
+    <div class="hsc-dates">শুরু: <span id="hscStartLabel">—</span> &nbsp;→&nbsp; পরীক্ষার সময়সীমা (২০ মাস পর): <span id="hscEndLabel">—</span></div>
+
+    <div class="month-box">
+      <div class="month-head">
+        <div class="month-title" id="monthTitle">এই মাসের অগ্রগতি</div>
+        <div class="month-percent" id="monthPercent">0%</div>
+      </div>
+      <div class="month-track">
+        <div class="month-fill" id="monthFill"></div>
+        <div class="month-marker" id="monthMarker">🗓️</div>
+      </div>
+      <div class="month-stats">
+        <span><b id="monthDaysPassed">0</b> দিন গেছে</span>
+        <span><b id="monthDaysLeft">0</b> দিন বাকি</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">Daily Ibadah</div>
+
+  <div class="ibadah-card">
+    <div class="ibadah-head">
+      <div class="ibadah-date" id="ibadahDateLabel">আজ<span class="back-today" id="backToToday" style="display:none;">আজকের দিনে ফিরে যাও</span></div>
+      <div class="ibadah-today-badge">Namaz 50 · Quran 35 · Family 10 · Charity 15 — max 110</div>
+    </div>
+
+    <div class="check-grid" id="namazGrid"></div>
+
+    <div class="quran-row">
+      <span class="label">📖 কুরআন পড়া (পৃষ্ঠা)</span>
+      <div class="stepper">
+        <button id="quranMinus">−</button>
+        <input type="number" id="quranPages" min="0" value="0">
+        <button id="quranPlus">+</button>
+      </div>
+      <span class="pts" id="quranPts">0 pts</span>
+    </div>
+
+    <div class="check-grid" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr));">
+      <label class="check-item" id="zikirItem">
+        <input type="checkbox" id="zikirCheck">
+        <span class="box">✓</span>
+        <span class="name">🤲 জিকির (৩০ মিনিট)</span>
+        <span class="pts">habit</span>
+      </label>
+      <label class="check-item" id="helpingItem">
+        <input type="checkbox" id="helpingCheck">
+        <span class="box">✓</span>
+        <span class="name">🤝 পরিবারকে সাহায্য</span>
+        <span class="pts">+10</span>
+      </label>
+      <label class="check-item" id="charityItem">
+        <input type="checkbox" id="charityCheck">
+        <span class="box">✓</span>
+        <span class="name">💝 দান-সদকা</span>
+        <span class="pts">+15</span>
+      </label>
+    </div>
+
+    <div class="ibadah-points">
+      <div><span class="total" id="ibadahTotal">0</span> <span class="of">/ 110 pts</span></div>
+      <div class="pct-badge" id="ibadahPctBadge">0%</div>
+    </div>
+  </div>
+
+  <div class="ibadah-card">
+    <div class="ibadah-head">
+      <div class="ibadah-date" id="gridMonthLabel">মাসের ক্যালেন্ডার</div>
+      <div class="ibadah-today-badge">দিনে ক্লিক করে সেই দিনের হিসাব ঠিক করতে পারবে</div>
+    </div>
+    <div class="ibadah-grid" id="ibadahGrid"></div>
+  </div>
+
+  <div class="ibadah-card">
+    <div class="level-card-head">
+      <div class="level-card-icon" id="ilvlIcon">🌱</div>
+      <div>
+        <div class="level-card-name" id="ilvlName">Talib</div>
+        <div class="level-card-arabic" id="ilvlArabic">طالب</div>
+      </div>
+    </div>
+    <div class="level-card-meaning" id="ilvlMeaning">—</div>
+    <div class="lvl-track"><div class="lvl-fill" id="lvlFill"></div></div>
+    <div class="hsc-stats">
+      <span><b id="ilvlPoints">0</b> points এই মাসে</span>
+      <span id="ilvlNextHint"></span>
+    </div>
+    <div class="rewards-row" id="rewardsRow"></div>
+    <div class="lvl-note">৩০-দিনের মাস ধরে level threshold হিসাব করা হয়েছে, এই মাসের দৈর্ঘ্য অনুযায়ী স্কেল করা আছে।</div>
+  </div>
+
+  <footer>consistency compounds. one day at a time.</footer>
+</div>
+
+<div class="panel-overlay" id="nameOverlay">
+  <div class="panel">
+    <h3>স্বাগতম 👋</h3>
+    <p>শুরু করার আগে তোমার নামটা বলো — এটা সবসময় উপরে ডান দিকে দেখা যাবে।</p>
+    <label for="nameInput">তোমার নাম</label>
+    <input type="text" id="nameInput" placeholder="যেমনঃ Rafi">
+    <div class="panel-actions">
+      <button class="btn primary" id="saveNameBtn" style="flex:1">শুরু করি</button>
+    </div>
+    <p id="nameError" style="display:none; color:#e08f6f; margin:12px 0 0; font-size:12px;">Save করা যায়নি — এই artifact-টা এখনো publish করা হয়নি বলে data persist হচ্ছে না। উপরে ডান কোণায় "Publish" বাটনে ক্লিক করে আবার চেষ্টা করো।</p>
+  </div>
+</div>
+
+<div class="panel-overlay" id="panelOverlay">
+  <div class="panel">
+    <h3>সেটিংস</h3>
+    <p>নাম বা তারিখ ভুল হয়ে থাকলে এখান থেকে ঠিক করে নাও।</p>
+    <label for="nameInputSettings">তোমার নাম</label>
+    <input type="text" id="nameInputSettings">
+    <label for="startDateInput">Day 0 (nofap শুরুর তারিখ)</label>
+    <input type="date" id="startDateInput">
+    <label for="hscStartInput">HSC life শুরুর তারিখ (এখান থেকে ২০ মাস গোনা হবে)</label>
+    <input type="date" id="hscStartInput">
+    <div class="panel-actions">
+      <button class="btn" id="cancelPanel">বাতিল</button>
+      <button class="btn primary" id="savePanel">Save</button>
+    </div>
+    <p id="settingsError" style="display:none; color:#e08f6f; margin:12px 0 0; font-size:12px;">Save করা যায়নি — artifact publish করা না থাকলে data persist হয় না। Publish করে আবার চেষ্টা করো।</p>
+  </div>
+</div>
+
+<div class="panel-overlay" id="relapsePanelOverlay">
+  <div class="panel">
+    <h3>আজ থেকে আবার শুরু?</h3>
+    <p>Relapse হওয়া মানে journey শেষ না — এটা শুধু একটা নতুন Day 0। তোমার লেখা কারণটা কিন্তু থেকেই যাবে, মুছে যাবে না।</p>
+    <div class="panel-actions">
+      <button class="btn" id="cancelRelapse">বাতিল</button>
+      <button class="btn danger" id="confirmRelapse">হ্যাঁ, আজ থেকে শুরু করি</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const LEVELS = [
+    {name:"Seedling", icon:"🌱", min:0, max:0, motto:"The journey begins", desc:["Starting point","প্রথম দিন — এখান থেকেই সব শুরু"]},
+    {name:"Resister", icon:"⚔️", min:1, max:3, motto:"প্রথম যুদ্ধটা এখনই", desc:["প্রথম urges-এর সাথে fight","সবচেয়ে unstable সময়"]},
+    {name:"Survivor", icon:"🛡️", min:4, max:7, motto:"টিকে থাকাই এখন জয়", desc:["Brain dopamine craving high","discipline build শুরু"]},
+    {name:"Warrior", icon:"🔥", min:8, max:14, motto:"ভেতরে আগুন জ্বলছে", desc:["Confidence rise","urges এখনও strong"]},
+    {name:"Guardian", icon:"🗿", min:15, max:21, motto:"সবচেয়ে কঠিন মোড়", desc:["Habit rewiring শুরু","অনেকেই এখানে relapse করে"]},
+    {name:"Conqueror", icon:"👑", min:22, max:30, motto:"এক মাস ছুঁয়ে ফেলার গল্প", desc:["self-control visibly stronger","big milestone"]},
+    {name:"Rebuilder", icon:"⚡", min:31, max:45, motto:"নতুন করে গড়ে ওঠা", desc:["dopamine reset phase","mental clarity improve"]},
+    {name:"Master", icon:"🧠", min:46, max:60, motto:"এখন তুমি control-এ", desc:["urges manageable","stronger mindset"]},
+    {name:"Legend", icon:"🌟", min:61, max:90, motto:"identity বদলে যাচ্ছে", desc:["habit deeply changing","identity shift শুরু"]},
+    {name:"Ascended", icon:"🚀", min:91, max:180, motto:"discipline এখন lifestyle", desc:["long-term discipline mode","huge respect level"]},
+    {name:"Immortal", icon:"♾️", min:181, max:Infinity, motto:"এটাই এখন তুমি", desc:["ultimate consistency","lifestyle transformed"]}
+  ];
+
+  const ISLAMIC_LEVELS = [
+    {name:"Talib", arabic:"طالب", icon:"🌱", min:0, max:600, meaning:"অনুসন্ধানকারী / জ্ঞান ও সৎপথের খোঁজে থাকা ব্যক্তি। এটাই journey-এর শুরু।", rewards:["Favorite snack","Extra rest time"]},
+    {name:"Mujahid", arabic:"مجاهد", icon:"⚔️", min:601, max:1200, meaning:"নিজের নফসের বিরুদ্ধে সংগ্রামকারী। এখানে discipline build হতে শুরু করে।", rewards:["ছোট Islamic book","Favorite meal"]},
+    {name:"Sabr", arabic:"صبر", icon:"🕊️", min:1201, max:1800, meaning:"ধৈর্যশীল ব্যক্তি। এখানে consistency ও patience শক্তিশালী হয়।", rewards:["Journal","Useful study item"]},
+    {name:"Muttaqi", arabic:"متقي", icon:"🛡️", min:1801, max:2400, meaning:"আল্লাহভীরু ব্যক্তি। এই স্তরে habits আরও গভীর হয়।", rewards:["New dress","Family outing"]},
+    {name:"Abid", arabic:"عابد", icon:"🌙", min:2401, max:2900, meaning:"ইবাদতে নিবেদিত ব্যক্তি। এখানে ইবাদতের সাথে সম্পর্ক আরও মজবুত হয়।", rewards:["New Quran copy","Tasbeeh","Meaningful gift"]},
+    {name:"Sadiq", arabic:"صادق", icon:"✨", min:2901, max:3300, meaning:"সত্যবাদী ও আন্তরিক ব্যক্তি। এটি সর্বোচ্চ consistency-এর level।", rewards:["Biggest personal reward","Special goal unlock","Long-desired item"]}
+  ];
+
+  const NAMAZ_KEYS = [
+    {key:"fajr", label:"ফজর"},
+    {key:"zohr", label:"যোহর"},
+    {key:"asr", label:"আসর"},
+    {key:"maghrib", label:"মাগরিব"},
+    {key:"isha", label:"এশা"}
+  ];
+
+  const BN_MONTHS = ["জানুয়ারি","ফেব্রুয়ারি","মার্চ","এপ্রিল","মে","জুন","জুলাই","আগস্ট","সেপ্টেম্বর","অক্টোবর","নভেম্বর","ডিসেম্বর"];
+
+  const STORAGE_KEY = "nofap:data";
+  const RADIUS = 44, CIRC = 2*Math.PI*RADIUS;
+  let state = { startDate: null, reason: "", hscStart: null, name: "", ibadah: {} };
+  let saveTimer = null;
+  let activeIbadahDate = null;
+
+  const $ = id => document.getElementById(id);
+  const ring = $("ring");
+  ring.style.strokeDasharray = CIRC;
+
+  function toISO(d){
+    return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+  }
+  function todayISO(){ return toISO(new Date()); }
+  function wait(ms){ return new Promise(r=>setTimeout(r, ms)); }
+
+  function levelColor(idx){
+    const t = idx/10;
+    const hue = 140 - t*112;
+    const light = 52 + t*4;
+    return `hsl(${hue}, 55%, ${light}%)`;
+  }
+
+  function dayCount(startISO){
+    if(!startISO) return 0;
+    const start = new Date(startISO + "T00:00:00");
+    const now = new Date();
+    const nowMid = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const diff = Math.floor((nowMid - start) / 86400000);
+    return Math.max(0, diff);
+  }
+
+  function levelForDay(day){
+    for(let i=0;i<LEVELS.length;i++){
+      if(day >= LEVELS[i].min && day <= LEVELS[i].max) return i;
+    }
+    return LEVELS.length-1;
+  }
+
+  function addMonths(startISO, months){
+    const d = new Date(startISO + "T00:00:00");
+    const day = d.getDate();
+    d.setDate(1);
+    d.setMonth(d.getMonth() + months);
+    const lastDay = new Date(d.getFullYear(), d.getMonth()+1, 0).getDate();
+    d.setDate(Math.min(day, lastDay));
+    return d;
+  }
+
+  const HSC_MONTHS = 20;
+
+  function renderHsc(){
+    const tISO = todayISO();
+    if(!state.hscStart) state.hscStart = tISO;
+
+    const start = new Date(state.hscStart + "T00:00:00");
+    const end = addMonths(state.hscStart, HSC_MONTHS);
+    const today = new Date(tISO + "T00:00:00");
+
+    const totalDays = Math.max(1, Math.round((end - start) / 86400000));
+    const passedDays = Math.min(totalDays, Math.max(0, Math.round((today - start) / 86400000)));
+    const leftDays = Math.max(0, totalDays - passedDays);
+    const pct = Math.min(100, Math.round((passedDays/totalDays)*1000)/10);
+
+    $("hscPercent").textContent = pct.toFixed(1).replace(/\.0$/,'') + "%";
+    $("hscDaysPassed").textContent = passedDays;
+    $("hscDaysLeft").textContent = leftDays;
+    $("hscFill").style.width = pct + "%";
+    $("hscMarker").style.left = pct + "%";
+    $("hscStartLabel").textContent = start.toLocaleDateString('bn-BD', {year:'numeric', month:'short', day:'numeric'});
+    $("hscEndLabel").textContent = end.toLocaleDateString('bn-BD', {year:'numeric', month:'short', day:'numeric'});
+
+    const t = pct/100;
+    const hue = 205 - t*175;
+    const c1 = `hsl(${hue}, 65%, 60%)`;
+    const c2 = `hsl(${hue}, 70%, 72%)`;
+    document.documentElement.style.setProperty('--hsc-color', c1);
+    document.documentElement.style.setProperty('--hsc-color-2', c2);
+    document.documentElement.style.setProperty('--hsc-glow', c1.replace('hsl','hsla').replace(')', ', 0.45)'));
+
+    $("hscMarker").textContent = pct >= 100 ? "🎓" : (pct >= 80 ? "🔥" : "📖");
+  }
+
+  function renderMonth(){
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    const daysInMonth = new Date(year, month+1, 0).getDate();
+    const dayOfMonth = now.getDate();
+    const passed = dayOfMonth;
+    const left = daysInMonth - dayOfMonth;
+    const pct = Math.round((passed/daysInMonth)*1000)/10;
+
+    $("monthTitle").textContent = BN_MONTHS[month] + " মাসের অগ্রগতি";
+    $("monthPercent").textContent = pct.toFixed(1).replace(/\.0$/,'') + "%";
+    $("monthFill").style.width = pct + "%";
+    $("monthMarker").style.left = pct + "%";
+    $("monthDaysPassed").textContent = passed + " / " + daysInMonth;
+    $("monthDaysLeft").textContent = left;
+    $("monthMarker").textContent = pct >= 100 ? "✅" : "🗓️";
+  }
+
+  /* ---------- Ibadah ---------- */
+  function defaultEntry(){
+    return {fajr:false,zohr:false,asr:false,maghrib:false,isha:false,quranPages:0,helpingFamily:false,charity:false,zikir:false};
+  }
+  function getEntry(dateISO){
+    return state.ibadah[dateISO] ? Object.assign(defaultEntry(), state.ibadah[dateISO]) : defaultEntry();
+  }
+  function dailyPoints(entry){
+    const namazCount = NAMAZ_KEYS.filter(n=>entry[n.key]).length;
+    const namazPts = namazCount*10;
+    const pages = Number(entry.quranPages)||0;
+    const quranPts = pages*5 + (pages>=5?10:0);
+    const helpingPts = entry.helpingFamily?10:0;
+    const charityPts = entry.charity?15:0;
+    return namazPts+quranPts+helpingPts+charityPts;
+  }
+
+  function buildNamazGrid(){
+    const grid = $("namazGrid");
+    grid.innerHTML = "";
+    NAMAZ_KEYS.forEach(n=>{
+      const label = document.createElement('label');
+      label.className = 'check-item';
+      label.id = 'namaz-' + n.key;
+      label.innerHTML = `<input type="checkbox" data-key="${n.key}"><span class="box">✓</span><span class="name">🕌 ${n.label}</span><span class="pts">+10</span>`;
+      grid.appendChild(label);
+      label.querySelector('input').addEventListener('change', (e)=> updateField(n.key, e.target.checked));
+    });
+  }
+
+  function updateField(field, value){
+    if(!state.ibadah[activeIbadahDate]) state.ibadah[activeIbadahDate] = defaultEntry();
+    state.ibadah[activeIbadahDate][field] = value;
+    renderIbadahForm();
+    renderIbadahGrid();
+    renderIbadahSummary();
+    debouncedPersist();
+  }
+
+  function debouncedPersist(){
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(()=>{ persist(); }, 700);
+  }
+
+  function renderIbadahForm(){
+    const entry = getEntry(activeIbadahDate);
+    const isToday = activeIbadahDate === todayISO();
+    const d = new Date(activeIbadahDate + "T00:00:00");
+    $("ibadahDateLabel").innerHTML = (isToday ? "আজ, " : "") + d.toLocaleDateString('bn-BD', {day:'numeric', month:'long'}) +
+      (isToday ? "" : `<span class="back-today" id="backToToday">আজকের দিনে ফিরে যাও</span>`);
+    if(!isToday){
+      const btn = document.getElementById('backToToday');
+      if(btn) btn.addEventListener('click', ()=>{ activeIbadahDate = todayISO(); renderIbadahForm(); });
+    }
+
+    NAMAZ_KEYS.forEach(n=>{
+      const el = $('namaz-'+n.key);
+      const input = el.querySelector('input');
+      input.checked = !!entry[n.key];
+      el.classList.toggle('checked', !!entry[n.key]);
+    });
+
+    $("quranPages").value = entry.quranPages;
+    const pages = Number(entry.quranPages)||0;
+    const quranPts = pages*5 + (pages>=5?10:0);
+    $("quranPts").textContent = quranPts + " pts" + (pages>=5 ? " (bonus +10 সহ)" : "");
+
+    $("zikirCheck").checked = !!entry.zikir;
+    $("zikirItem").classList.toggle('checked', !!entry.zikir);
+    $("helpingCheck").checked = !!entry.helpingFamily;
+    $("helpingItem").classList.toggle('checked', !!entry.helpingFamily);
+    $("charityCheck").checked = !!entry.charity;
+    $("charityItem").classList.toggle('checked', !!entry.charity);
+
+    const total = dailyPoints(entry);
+    const pct = Math.min(100, Math.round((total/110)*100));
+    $("ibadahTotal").textContent = total;
+    $("ibadahPctBadge").textContent = pct + "%";
+  }
+
+  function renderIbadahGrid(){
+    const now = new Date();
+    const year = now.getFullYear(), month = now.getMonth();
+    const daysInMonth = new Date(year, month+1, 0).getDate();
+    const todayDay = now.getDate();
+    const tISO = todayISO();
+
+    $("gridMonthLabel").textContent = BN_MONTHS[month] + " মাসের ক্যালেন্ডার";
+
+    const grid = $("ibadahGrid");
+    grid.innerHTML = "";
+    for(let day=1; day<=daysInMonth; day++){
+      const dateISO = year+"-"+String(month+1).padStart(2,"0")+"-"+String(day).padStart(2,"0");
+      const cell = document.createElement('div');
+      const isFuture = day > todayDay;
+      const isToday = dateISO === tISO;
+      cell.className = 'day-cell' + (isFuture ? ' future' : '') + (isToday ? ' today' : '');
+      let pctLabel = '';
+      if(!isFuture){
+        const pts = dailyPoints(getEntry(dateISO));
+        const pct = Math.min(100, Math.round((pts/110)*100));
+        pctLabel = pct + '%';
+        const alpha = Math.min(1, pct/100)*0.5 + 0.06;
+        cell.style.background = `rgba(212,175,55,${alpha})`;
+        if(isToday) cell.style.borderColor = 'var(--ibadah-color)';
+      }
+      cell.innerHTML = `<span class="num">${day}</span>${isFuture ? '' : `<span class="pct">${pctLabel}</span>`}`;
+      if(!isFuture){
+        cell.addEventListener('click', ()=>{
+          activeIbadahDate = dateISO;
+          renderIbadahForm();
+          document.querySelector('.ibadah-card').scrollIntoView({behavior:'smooth', block:'center'});
+        });
+      }
+      grid.appendChild(cell);
+    }
+  }
+
+  function islamicLevelForPoints(pts, scale){
+    for(let i=0;i<ISLAMIC_LEVELS.length;i++){
+      const lvl = ISLAMIC_LEVELS[i];
+      const min = lvl.min*scale, max = lvl.max*scale;
+      if(pts >= min && pts <= max) return {idx:i, min, max};
+    }
+    return {idx: ISLAMIC_LEVELS.length-1, min: ISLAMIC_LEVELS[ISLAMIC_LEVELS.length-1].min*scale, max: ISLAMIC_LEVELS[ISLAMIC_LEVELS.length-1].max*scale};
+  }
+
+  function renderIbadahSummary(){
+    const now = new Date();
+    const year = now.getFullYear(), month = now.getMonth();
+    const daysInMonth = new Date(year, month+1, 0).getDate();
+    const todayDay = now.getDate();
+    const scale = daysInMonth/30;
+
+    let total = 0;
+    for(let day=1; day<=todayDay; day++){
+      const dateISO = year+"-"+String(month+1).padStart(2,"0")+"-"+String(day).padStart(2,"0");
+      total += dailyPoints(getEntry(dateISO));
+    }
+
+    const {idx, min, max} = islamicLevelForPoints(total, scale);
+    const lvl = ISLAMIC_LEVELS[idx];
+
+    $("ilvlIcon").textContent = lvl.icon;
+    $("ilvlName").textContent = lvl.name;
+    $("ilvlArabic").textContent = lvl.arabic;
+    $("ilvlMeaning").textContent = lvl.meaning;
+    $("ilvlPoints").textContent = total;
+
+    const span = max - min;
+    const into = total - min;
+    const pct = span > 0 ? Math.min(100, Math.max(0, (into/span)*100)) : 100;
+    $("lvlFill").style.width = pct + "%";
+
+    if(idx === ISLAMIC_LEVELS.length-1 && total >= max){
+      $("ilvlNextHint").innerHTML = "সর্বোচ্চ level-এ পৌঁছে গেছো 🎉";
+    } else {
+      const next = ISLAMIC_LEVELS[idx+1];
+      const pointsLeft = Math.ceil(max - total + 1);
+      $("ilvlNextHint").innerHTML = `<b>${next.name}</b>-এ যেতে আর <b>${pointsLeft}</b> points বাকি`;
+    }
+
+    const rewardsRow = $("rewardsRow");
+    rewardsRow.innerHTML = "";
+    lvl.rewards.forEach(r=>{
+      const chip = document.createElement('span');
+      chip.className = 'reward-chip';
+      chip.textContent = '🎁 ' + r;
+      rewardsRow.appendChild(chip);
+    });
+  }
+
+  function render(){
+    const tISO = todayISO();
+    if(!state.startDate) state.startDate = tISO;
+
+    const day = dayCount(state.startDate);
+    const idx = levelForDay(day);
+    const lvl = LEVELS[idx];
+    const color = levelColor(idx);
+
+    document.documentElement.style.setProperty('--accent', color);
+    document.documentElement.style.setProperty('--accent-glow', color.replace('hsl','hsla').replace(')', ', 0.35)'));
+
+    $("dayIcon").textContent = lvl.icon;
+    $("dayNumber").textContent = day;
+    $("levelIndex").textContent = "Level " + idx;
+    $("levelName").textContent = lvl.name;
+    $("levelMotto").textContent = lvl.motto;
+
+    let pct;
+    if(lvl.max === Infinity){
+      pct = 1;
+      $("nextHint").innerHTML = "তুমি সর্বোচ্চ স্তরে পৌঁছে গেছো — <b>Immortal</b> 🎉";
+    } else {
+      const span = lvl.max - lvl.min + 1;
+      const into = day - lvl.min + 1;
+      pct = Math.min(1, into/span);
+      const daysLeft = lvl.max - day + 1;
+      const nextLvl = LEVELS[idx+1];
+      $("nextHint").innerHTML = `<b>${nextLvl.name}</b>-এ পৌঁছাতে আর <b>${daysLeft}</b> দিন বাকি`;
+    }
+    const offset = CIRC * (1 - pct);
+    ring.style.stroke = color;
+    ring.style.strokeDashoffset = offset;
+
+    renderPath(day, idx);
+    renderHsc();
+    renderMonth();
+    renderIbadahForm();
+    renderIbadahGrid();
+    renderIbadahSummary();
+
+    $("namePillText").textContent = state.name || "তুমি";
+  }
+
+  function renderPath(day, currentIdx){
+    const container = $("path");
+    container.innerHTML = "";
+    LEVELS.forEach((lvl, i)=>{
+      const el = document.createElement('div');
+      const status = i < currentIdx ? 'done' : (i === currentIdx ? 'current' : '');
+      el.className = 'path-item ' + status;
+      const range = lvl.max === Infinity ? `Day ${lvl.min}+` : (lvl.min===lvl.max ? `Day ${lvl.min}` : `Day ${lvl.min}–${lvl.max}`);
+      el.innerHTML = `
+        <div class="path-dot">${i===currentIdx ? '' : (i<currentIdx ? '✓' : '')}</div>
+        <div class="path-body">
+          <div class="path-top">
+            <span class="path-icon">${lvl.icon}</span>
+            <span class="path-name">${i}. ${lvl.name}</span>
+            <span class="path-range">${range}</span>
+          </div>
+          ${i===currentIdx ? `<div class="path-desc">${lvl.desc.join(' · ')}</div>` : ''}
+        </div>
+      `;
+      container.appendChild(el);
+    });
+  }
+
+  async function load(){
+    try{
+      const res = await window.storage.get(STORAGE_KEY, false);
+      if(res && res.value){
+        const parsed = JSON.parse(res.value);
+        state.startDate = parsed.startDate || null;
+        state.reason = parsed.reason || "";
+        state.hscStart = parsed.hscStart || null;
+        state.name = parsed.name || "";
+        state.ibadah = parsed.ibadah || {};
+      }
+    }catch(e){
+      // no saved data yet, or storage briefly unavailable — start fresh in-memory
+    }
+    activeIbadahDate = todayISO();
+    buildNamazGrid();
+    $("reasonText").value = state.reason;
+    render();
+    if(!state.name){
+      $("nameOverlay").classList.add('show');
+    }
+  }
+
+  async function persist(){
+    for(let attempt=0; attempt<2; attempt++){
+      try{
+        const result = await window.storage.set(STORAGE_KEY, JSON.stringify(state), false);
+        if(result) return true;
+      }catch(e){
+        console.error("save attempt " + (attempt+1) + " failed", e);
+        if(attempt === 0) await wait(800);
+      }
+    }
+    return false;
+  }
+
+  // reason autosave
+  $("reasonText").addEventListener('input', (e)=>{
+    state.reason = e.target.value;
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(async ()=>{
+      const ok = await persist();
+      const dot = $("saveDot");
+      const label = $("saveDotText");
+      dot.classList.remove('error');
+      if(ok){
+        label.textContent = "saved";
+        dot.classList.add('show');
+        setTimeout(()=>dot.classList.remove('show'), 1600);
+      } else {
+        label.textContent = "save failed — লেখা এখন শুধু এই session-এ আছে, একটু পরে আবার চেষ্টা করবে";
+        dot.classList.add('show', 'error');
+      }
+    }, 700);
+  });
+
+  // quran stepper
+  $("quranPages").addEventListener('input', (e)=>{
+    let v = Math.max(0, parseInt(e.target.value)||0);
+    updateField('quranPages', v);
+  });
+  $("quranMinus").addEventListener('click', ()=>{
+    const entry = getEntry(activeIbadahDate);
+    updateField('quranPages', Math.max(0, (Number(entry.quranPages)||0) - 1));
+  });
+  $("quranPlus").addEventListener('click', ()=>{
+    const entry = getEntry(activeIbadahDate);
+    updateField('quranPages', (Number(entry.quranPages)||0) + 1);
+  });
+
+  $("zikirCheck").addEventListener('change', (e)=> updateField('zikir', e.target.checked));
+  $("helpingCheck").addEventListener('change', (e)=> updateField('helpingFamily', e.target.checked));
+  $("charityCheck").addEventListener('change', (e)=> updateField('charity', e.target.checked));
+
+  // name overlay (first run)
+  $("saveNameBtn").addEventListener('click', async ()=>{
+    const val = $("nameInput").value.trim();
+    if(!val) return;
+    state.name = val;
+    render(); // reflect name in the pill immediately even if save fails
+    const ok = await persist();
+    if(ok){
+      $("nameOverlay").classList.remove('show');
+      $("nameError").style.display = 'none';
+    } else {
+      $("nameError").style.display = 'block';
+    }
+  });
+  $("nameInput").addEventListener('keydown', (e)=>{ if(e.key==='Enter') $("saveNameBtn").click(); });
+
+  // settings panel
+  $("namePill").addEventListener('click', ()=> $("settingsBtn").click());
+  $("settingsBtn").addEventListener('click', ()=>{
+    $("nameInputSettings").value = state.name || "";
+    $("startDateInput").value = state.startDate;
+    $("hscStartInput").value = state.hscStart;
+    $("panelOverlay").classList.add('show');
+  });
+  $("cancelPanel").addEventListener('click', ()=> $("panelOverlay").classList.remove('show'));
+  $("savePanel").addEventListener('click', async ()=>{
+    const nameVal = $("nameInputSettings").value.trim();
+    const val = $("startDateInput").value;
+    const hscVal = $("hscStartInput").value;
+    if(nameVal) state.name = nameVal;
+    if(val) state.startDate = val;
+    if(hscVal) state.hscStart = hscVal;
+    render();
+    const ok = await persist();
+    if(ok){
+      $("settingsError").style.display = 'none';
+      $("panelOverlay").classList.remove('show');
+    } else {
+      $("settingsError").style.display = 'block';
+    }
+  });
+
+  // relapse / restart panel
+  $("relapseBtn").addEventListener('click', ()=> $("relapsePanelOverlay").classList.add('show'));
+  $("cancelRelapse").addEventListener('click', ()=> $("relapsePanelOverlay").classList.remove('show'));
+  $("confirmRelapse").addEventListener('click', async ()=>{
+    state.startDate = todayISO();
+    await persist();
+    render();
+    $("relapsePanelOverlay").classList.remove('show');
+  });
+
+  load();
+})();
+</script>
+</body>
+</html>
